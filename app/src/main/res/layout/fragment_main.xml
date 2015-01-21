@@ -9,4 +9,38 @@
     <TextView android:id="@+id/section_label" android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Book Appointment"
+        android:id="@+id/button"
+        android:width="200dp"
+        android:layout_marginBottom="72dp"
+        android:layout_above="@+id/button2"
+        android:layout_centerHorizontal="true"
+        android:height="40dp" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Check Appointments"
+        android:id="@+id/button2"
+        android:width="200dp"
+        android:layout_centerVertical="true"
+        android:layout_alignLeft="@+id/button"
+        android:layout_alignStart="@+id/button"
+        android:height="40dp" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Log Out"
+        android:id="@+id/button3"
+        android:width="200dp"
+        android:layout_marginTop="72dp"
+        android:layout_below="@+id/button2"
+        android:layout_alignLeft="@+id/button2"
+        android:layout_alignStart="@+id/button2"
+        android:height="40dp" />
+
 </RelativeLayout>
