@@ -1,8 +1,10 @@
 package com.bufferinmuffins.bookinator;
 
+import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
+import android.view.View;
 import android.view.MenuItem;
 
 
@@ -36,5 +38,13 @@ public class LoginActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void onLoginClick(final View view) {
+        Intent i = new Intent(this, MainActivity.class);
+
+        startActivity(i);
+
+
     }
 }
