@@ -6,15 +6,19 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
 import android.view.MenuItem;
+import android.util.Log;
 
 
 public class LoginActivity extends ActionBarActivity {
+
+    private BookinatorSession bsession;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         this.getSupportActionBar().hide();
+        bsession = new BookinatorSession("aa");
     }
 
 
@@ -40,9 +44,6 @@ public class LoginActivity extends ActionBarActivity {
 
     public void onLoginClick(final View view) {
         Intent i = new Intent(this, MainActivity.class);
-
         startActivity(i);
-
-
     }
 }
