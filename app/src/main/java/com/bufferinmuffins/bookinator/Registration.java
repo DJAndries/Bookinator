@@ -29,6 +29,11 @@ public class Registration {
     private TextView errMsgView;
     private String apiKey;
     private RegisterActivity regActivity;
+    private String errMsg;
+
+    public String getErrMsg() {
+        return errMsg;
+    }
 
     public Registration(EditText nameField, EditText emailField, EditText pwdField, EditText cpwdField, TextView errMsgView, String apiKey, RegisterActivity regActivity) {
         this.nameField = nameField;
@@ -99,6 +104,10 @@ public class Registration {
 
         return true;
     }
+    public void register() {
+        new RegisterTask().execute(emailField.getText().toString(), pwdField.getText().toString(), nameField.getText().toString());
+    }
+
     private class RegisterTask extends AsyncTask<String, Void, Boolean> {
 
         @Override
@@ -108,9 +117,9 @@ public class Registration {
 
             try {
                 getReq = new HttpGet(new URI("https://api.mongolab.com/api/1/databases/bookinatordb/collections/accounts?apiKey="
-                        + apiKey + "&q=" + URLEncoder.encode("{\"email\":\"" + emailField.getText().toString() + "\"}", "UTF-8")));
+                        + apiKey + "&q=" + URLEncoder.encode("{\"email\":\"" + params[0] + "\"}", "UTF-8")));
             } catch (Exception e) {
-                errMsgView.setText("Unexpected error occurred. Please try again.");
+                errMsg = "Unexpected error occurred. Please try again.";
                 e.printStackTrace();
                 return false;
             }
@@ -123,13 +132,13 @@ public class Registration {
                 getResp = cli.execute(getReq);
                 result = new BasicResponseHandler().handleResponse(getResp);
             } catch (Exception e) {
-                errMsgView.setText("Unexpected error occurred. Please try again.");
+                errMsg = "Unexpected error occurred. Please try again.";
                 e.printStackTrace();
                 return false;
             }
             cli.getConnectionManager().shutdown();
             if (result.length() > 6) {
-                errMsgView.setText("Email already registered in system.");
+                errMsg = "Email already registered in system.";
                 return false;
             }
 
@@ -144,7 +153,7 @@ public class Registration {
 
                 postReq = new HttpPost(new URI("https://api.mongolab.com/api/1/databases/bookinatordb/collections/accounts?apiKey=" + apiKey));
             } catch (Exception e) {
-                errMsgView.setText("Unexpected error occurred. Please try again.");
+                errMsg = "Unexpected error occurred. Please try again.";
                 e.printStackTrace();
                 return false;
             }
@@ -154,28 +163,25 @@ public class Registration {
             postReq.addHeader("Content-Type", "application/json");
 
             try {
-                jop.put("email", emailField.getText().toString());
-                jop.put("pwd", getSHA256(pwdField.getText().toString()));
-                jop.put("name", nameField.getText().toString());
+                jop.put("email", params[0]);
+                jop.put("pwd", params[1]);
+                jop.put("name", params[2]);
                 postReq.setEntity(new StringEntity(jop.toString(), "UTF8"));
                 postResp = cli.execute(postReq);
                 result = new BasicResponseHandler().handleResponse(postResp);
             } catch (Exception e) {
-                errMsgView.setText("Unexpected error occurred. Please try again.");
+                errMsg = "Unexpected error occurred. Please try again.";
                 e.printStackTrace();
                 return false;
             }
             cli.getConnectionManager().shutdown();
             if (result.length() < 10) {
-                errMsgView.setText("Unexpected error occurred. Please try again.");
+                errMsg = "Unexpected error occurred. Please try again.";
                 return false;
             }
             return true;
         }
 
-        public void login(String email, String pwd) {
-            new RegisterTask().execute("");
-        }
 
         @Override
         protected void onPostExecute(Boolean aBoolean) {

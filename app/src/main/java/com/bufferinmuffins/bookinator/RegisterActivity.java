@@ -1,5 +1,7 @@
 package com.bufferinmuffins.bookinator;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -29,7 +31,19 @@ public class RegisterActivity extends ActionBarActivity {
 
     public void onRegisterResponse(Boolean pass) {
         if (pass) {
-            finish();
+            AlertDialog alertDialog = new AlertDialog.Builder(this).create();
+            alertDialog.setTitle("Congratulations!");
+            alertDialog.setMessage("You have been successfully registered! You may now log in.");
+            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                            finish();
+                        }
+                    });
+            alertDialog.show();
+        } else {
+            ((TextView)findViewById(R.id.register_errmsgview)).setText(reg.getErrMsg());
         }
     }
 
@@ -46,7 +60,9 @@ public class RegisterActivity extends ActionBarActivity {
 
     public void onClick(final View view) {
 
-        reg.validate();
+        if (reg.validate()) {
+            reg.register();
+        }
 
     }
 
