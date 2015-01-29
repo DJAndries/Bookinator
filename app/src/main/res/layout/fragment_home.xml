@@ -1,0 +1,81 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.bufferinmuffins.bookinator.HomeFragment">
+
+    <!-- TODO: Update blank fragment layout -->
+
+    <TableLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:padding="20dp" >
+
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1" />
+
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" >
+
+            <Button
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:text="Book Appointment"
+                android:id="@+id/home_book_button"
+                android:width="200dp"
+                android:layout_marginBottom="72dp"
+                android:layout_above="@+id/home_check_button"
+                android:layout_centerHorizontal="true"
+                android:height="40dp"
+                android:layout_weight="1"
+                android:onClick="onHomeClick" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" >
+
+            <Button
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:text="Check Appointments"
+                android:id="@+id/home_check_button"
+                android:width="200dp"
+                android:layout_centerVertical="true"
+                android:layout_alignLeft="@+id/home_book_button"
+                android:layout_alignStart="@+id/home_book_button"
+                android:height="40dp"
+                android:layout_weight="1" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" >
+
+            <Button
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:text="Log Out"
+                android:id="@+id/home_logout_button"
+                android:width="200dp"
+                android:layout_marginTop="72dp"
+                android:layout_below="@+id/home_check_button"
+                android:layout_alignLeft="@+id/home_check_button"
+                android:layout_alignStart="@+id/home_check_button"
+                android:height="40dp"
+                android:layout_weight="1"
+                android:onClick="onHomeClick" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1" />
+    </TableLayout>
+
+</FrameLayout>

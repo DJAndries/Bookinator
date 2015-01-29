@@ -1,26 +1,24 @@
 package com.bufferinmuffins.bookinator;
 
 import android.app.Activity;
+import android.content.Intent;
+import android.net.Uri;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.content.Context;
-import android.os.Build;
 import android.os.Bundle;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.support.v4.widget.DrawerLayout;
-import android.widget.ArrayAdapter;
-import android.widget.TextView;
 
 
 public class MainActivity extends ActionBarActivity
-        implements NavigationDrawerFragment.NavigationDrawerCallbacks {
+        implements NavigationDrawerFragment.NavigationDrawerCallbacks, HomeFragment.OnFragmentInteractionListener,
+                    BookFragment.OnFragmentInteractionListener {
 
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
@@ -40,20 +38,35 @@ public class MainActivity extends ActionBarActivity
         mNavigationDrawerFragment = (NavigationDrawerFragment)
                 getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
         mTitle = getTitle();
-
         // Set up the drawer.
         mNavigationDrawerFragment.setUp(
                 R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));
+
+    }
+
+    @Override
+    public void onBackPressed() {
     }
 
     @Override
     public void onNavigationDrawerItemSelected(int position) {
         // update the main content by replacing fragments
         FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction()
-                .replace(R.id.container, PlaceholderFragment.newInstance(position + 1))
-                .commit();
+        if (position == 1) {
+            fragmentManager.beginTransaction()
+                    .replace(R.id.container, BookFragment.newInstance())
+                    .commit();
+        } else if (position == 4) {
+            Intent i = new Intent(this, LoginActivity.class);
+
+            startActivity(i);
+        } else {
+            fragmentManager.beginTransaction()
+                    .replace(R.id.container, HomeFragment.newInstance())
+                    .commit();
+        }
+
     }
 
     public void onSectionAttached(int number) {
@@ -105,11 +118,22 @@ public class MainActivity extends ActionBarActivity
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
+
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+
+    }
+
+    public void onHomeClick(final View view) {
+        if (view == findViewById(R.id.home_book_button)) {
+            mNavigationDrawerFragment.selectItem(1);
+        } else if (view == findViewById(R.id.home_logout_button)) {
+            mNavigationDrawerFragment.selectItem(4);
+        }
     }
 
     /**
@@ -141,13 +165,15 @@ public class MainActivity extends ActionBarActivity
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
             View rootView;
-            if (getArguments().getInt(ARG_SECTION_NUMBER) == 0) {
-                rootView = inflater.inflate(R.layout.fragment_main, container, false);
+            if (getArguments().getInt(ARG_SECTION_NUMBER) == 2) {
+                rootView = inflater.inflate(R.layout.fragment_book, container, false);
+
             } else {
-                rootView = inflater.inflate(R.layout.fragment_blank, container, false);
+                rootView = inflater.inflate(R.layout.fragment_home, container, false);
             }
             return rootView;
         }
+
 
         @Override
         public void onAttach(Activity activity) {
