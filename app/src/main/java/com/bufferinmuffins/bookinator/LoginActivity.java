@@ -7,6 +7,8 @@ import android.view.Menu;
 import android.view.View;
 import android.view.MenuItem;
 import android.util.Log;
+import android.widget.EditText;
+import android.widget.TextView;
 
 
 public class LoginActivity extends ActionBarActivity {
@@ -18,7 +20,7 @@ public class LoginActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         this.getSupportActionBar().hide();
-        bsession = new BookinatorSession("aa");
+        bsession = new BookinatorSession(getString(R.string.mongolab_apikey), this);
     }
 
 
@@ -43,6 +45,18 @@ public class LoginActivity extends ActionBarActivity {
     }
 
     public void onLoginClick(final View view) {
+        String email = ((EditText)findViewById(R.id.login_email_editText)).getText().toString();
+        String pwd = ((EditText)findViewById(R.id.login_password_editText)).getText().toString();
+        bsession.login(email, pwd);
+
+
+    }
+
+    public void onLoginResponse(boolean pass) {
+        if (!pass) {
+            ((TextView) findViewById(R.id.login_errtext)).setText(bsession.getErrMsg());
+            return;
+        }
         Intent i = new Intent(this, MainActivity.class);
         startActivity(i);
     }

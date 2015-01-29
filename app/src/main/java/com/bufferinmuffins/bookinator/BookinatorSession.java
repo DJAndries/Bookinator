@@ -1,5 +1,8 @@
 package com.bufferinmuffins.bookinator;
 
+import android.os.AsyncTask;
+import android.util.Log;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -8,6 +11,8 @@ import org.apache.http.client.ResponseHandler;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 
+import java.net.URI;
+import java.net.URLEncoder;
 import java.security.MessageDigest;
 
 /**
@@ -17,35 +22,34 @@ public class BookinatorSession {
     private String email;
     private String sessid;
     private String apiKey;
+    private String errMsg = "";
 
-    public BookinatorSession(String apiKey) {
-        this.apiKey = apiKey;
+    public LoginActivity getLoginActivity() {
+        return loginActivity;
     }
 
-    public BookinatorSession(String email, String sessid, String apiKey) {
+    public void setLoginActivity(LoginActivity loginActivity) {
+        this.loginActivity = loginActivity;
+    }
+
+    private LoginActivity loginActivity;
+
+    public BookinatorSession(String apiKey, LoginActivity act) {
+        this.apiKey = apiKey;
+        this.loginActivity = act;
+    }
+
+    public BookinatorSession(String email, String sessid, String apiKey, LoginActivity act) {
         this.apiKey = apiKey;
         this.email = email;
         this.sessid = sessid;
-
+        this.loginActivity = act;
     }
 
-    public boolean login(String email, String pwd, String errMsg) {
-        HttpClient cli = new DefaultHttpClient();
-        HttpGet getReq = new HttpGet("https://api.mongolab.com/api/1/databases/bookinatordb/collections/accounts?apiKey="
-            + apiKey + "&email={'email':'" + email + "'}");
-        HttpResponse getResp;
-        String result;
-        getReq.addHeader("Content-Type", "application/json");
-        try {
+    public String getErrMsg() { return errMsg; }
 
-            getResp = cli.execute(getReq);
-            result = new BasicResponseHandler().handleResponse(getResp);
-        } catch (Exception e) {
-            errMsg = "Unexpected error occurred. Please try again.";
-            return false;
-        }
-        cli.getConnectionManager().shutdown();
-        return true;
+    public void login(String email, String pwd) {
+        new LoginTask().execute(email, pwd);
     }
 
     private String getSHA256(String pwd) {
@@ -70,5 +74,50 @@ public class BookinatorSession {
 
     public boolean isLoggedIn() {
         return false;
+    }
+
+    private class LoginTask extends AsyncTask<String, Void, Boolean> {
+
+        @Override
+        protected Boolean doInBackground(String... params) {
+            HttpClient cli = new DefaultHttpClient();
+            HttpGet getReq;
+
+            try {
+                /*getReq = new HttpGet(new URI("https://api.mongolab.com/api/1/databases/bookinatordb/collections/accounts?apiKey="
+                        + apiKey + "&q={'email':'" + params[0] + "','pwd':'" + getSHA256(params[1]) + "'}"));*/
+                getReq = new HttpGet(new URI("https://api.mongolab.com/api/1/databases/bookinatordb/collections/accounts?apiKey="
+                        + apiKey + "&q=" + URLEncoder.encode("{\"email\":\"" + params[0] + "\",\"pwd\":\"" + getSHA256(params[1]) + "\"}", "UTF-8")));
+            } catch (Exception e) {
+                errMsg = "Unexpected error occurred. Please try again.";
+                e.printStackTrace();
+                return false;
+            }
+            HttpResponse getResp;
+            String result;
+
+            getReq.addHeader("Content-Type", "application/json");
+            try {
+
+                getResp = cli.execute(getReq);
+                result = new BasicResponseHandler().handleResponse(getResp);
+            } catch (Exception e) {
+                errMsg = "Unexpected error occurred. Please try again.";
+                e.printStackTrace();
+                return false;
+            }
+            cli.getConnectionManager().shutdown();
+            if (result.length() < 10) {
+                errMsg = "Incorrect email/password.";
+                return false;
+            }
+            return true;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean aBoolean) {
+            super.onPostExecute(aBoolean);
+            loginActivity.onLoginResponse(aBoolean);
+        }
     }
 }
