@@ -15,7 +15,7 @@ public class RegisterActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
-        reg = new Registration((EditText)findViewById(R.id.register_namefield), (EditText)findViewById(R.id.register_emailfield), (EditText)findViewById(R.id.register_passwordfield), (EditText)findViewById(R.id.register_cpwdfield), (TextView)findViewById(R.id.register_errmsgview));
+        reg = new Registration((EditText)findViewById(R.id.register_namefield), (EditText)findViewById(R.id.register_emailfield), (EditText)findViewById(R.id.register_passwordfield), (EditText)findViewById(R.id.register_cpwdfield), (TextView)findViewById(R.id.register_errmsgview), getString(R.string.mongolab_apikey), this);
 
     }
 
@@ -25,6 +25,12 @@ public class RegisterActivity extends ActionBarActivity {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_register, menu);
         return true;
+    }
+
+    public void onRegisterResponse(Boolean pass) {
+        if (pass) {
+            finish();
+        }
     }
 
     @Override
@@ -39,6 +45,10 @@ public class RegisterActivity extends ActionBarActivity {
     }
 
     public void onClick(final View view) {
+
         reg.validate();
+
     }
+
+
 }

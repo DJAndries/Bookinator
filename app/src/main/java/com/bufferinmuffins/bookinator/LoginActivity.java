@@ -52,7 +52,7 @@ public class LoginActivity extends ActionBarActivity {
 
     }
     public void onRegisterClick(final View view) {
-        Intent i = new Intent(this, RegisterActivity.class);
+        Intent i = new Intent(getApplicationContext(), RegisterActivity.class);
         startActivity(i);
     }
 
@@ -61,7 +61,8 @@ public class LoginActivity extends ActionBarActivity {
             ((TextView) findViewById(R.id.login_errtext)).setText(bsession.getErrMsg());
             return;
         }
-        Intent i = new Intent(this, MainActivity.class);
+        Intent i = new Intent(getApplicationContext(), MainActivity.class);
         startActivity(i);
+        finish();
     }
 }
