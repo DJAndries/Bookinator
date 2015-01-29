@@ -4,14 +4,19 @@ import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.EditText;
+import android.widget.TextView;
 
 
 public class RegisterActivity extends ActionBarActivity {
-
+    private Registration reg;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
+        reg = new Registration((EditText)findViewById(R.id.register_namefield), (EditText)findViewById(R.id.register_emailfield), (EditText)findViewById(R.id.register_passwordfield), (EditText)findViewById(R.id.register_cpwdfield), (TextView)findViewById(R.id.register_errmsgview));
+
     }
 
 
@@ -29,11 +34,11 @@ public class RegisterActivity extends ActionBarActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void onClick(final View view) {
+        reg.validate();
     }
 }

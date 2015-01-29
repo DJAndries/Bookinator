@@ -20,41 +20,35 @@ public class Registration {
         this.pwdField = pwdField;
         this.cpwdField = cpwdField;
         this.errMsgView = errMsgView;
-        initFieldColor();
+        init();
     }
 
-    private void initFieldColor() {
-        nameField.setBackgroundColor(Color.WHITE);
-        emailField.setBackgroundColor(Color.WHITE);
-        pwdField.setBackgroundColor(Color.WHITE);
-        cpwdField.setBackgroundColor(Color.WHITE);
+    private void init() {
+
         errMsgView.setText("");
     }
 
     public boolean validate() {
-        initFieldColor();
+        init();
         if (nameField.getText().toString().length() < 3) {
-            nameField.setBackgroundColor(Color.parseColor("#F5768D"));
             errMsgView.setText("Name must be provided.");
             return false;
         }
         String emailText = emailField.getText().toString();
         int atIndex = emailText.indexOf("@");
         if (atIndex < 1 || (emailText.substring(atIndex) != "@bcit.ca" && emailText.substring(atIndex) != "@my.bcit.ca")) {
-            emailField.setBackgroundColor(Color.parseColor("#F5768D"));
             errMsgView.setText("Valid BCIT email must be provided.");
             return false;
         }
 
         if (pwdField.getText().toString().length() < 7) {
-            pwdField.setBackgroundColor(Color.parseColor("#F5768D"));
+
             errMsgView.setText("Password must be at least 7 characters long.");
             return false;
         }
 
         if (!pwdField.getText().toString().equals(cpwdField.getText().toString())) {
-            pwdField.setBackgroundColor(Color.parseColor("#F5768D"));
-            cpwdField.setBackgroundColor(Color.parseColor("#F5768D"));
+
             errMsgView.setText("Passwords must be equal to each other.");
             return false;
         }
