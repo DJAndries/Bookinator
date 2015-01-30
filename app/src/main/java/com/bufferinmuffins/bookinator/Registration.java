@@ -164,7 +164,7 @@ public class Registration {
 
             try {
                 jop.put("email", params[0]);
-                jop.put("pwd", params[1]);
+                jop.put("pwd", getSHA256(params[1]));
                 jop.put("name", params[2]);
                 postReq.setEntity(new StringEntity(jop.toString(), "UTF8"));
                 postResp = cli.execute(postReq);
