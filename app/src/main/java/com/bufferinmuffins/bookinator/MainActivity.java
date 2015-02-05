@@ -174,7 +174,6 @@ public class MainActivity extends ActionBarActivity
             return rootView;
         }
 
-
         @Override
         public void onAttach(Activity activity) {
             super.onAttach(activity);

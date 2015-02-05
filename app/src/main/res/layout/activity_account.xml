@@ -107,13 +107,6 @@
             android:layout_width="fill_parent"
             android:layout_height="fill_parent" >
 
-            <Button
-                android:layout_width="fill_parent"
-                android:layout_height="75dp"
-                android:text="Log Out"
-                android:id="@+id/logOut_button_submit"
-                android:layout_weight="1"
-                android:layout_marginTop="20dp" />
         </TableRow>
 
     </TableLayout>

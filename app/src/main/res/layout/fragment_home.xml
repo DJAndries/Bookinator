@@ -26,7 +26,7 @@
                 android:text="Book Appointment"
                 android:id="@+id/home_book_button"
                 android:width="200dp"
-                android:layout_marginBottom="72dp"
+                android:layout_marginBottom="40dp"
                 android:layout_above="@+id/home_check_button"
                 android:layout_centerHorizontal="true"
                 android:height="40dp"
@@ -49,7 +49,28 @@
                 android:layout_alignLeft="@+id/home_book_button"
                 android:layout_alignStart="@+id/home_book_button"
                 android:height="40dp"
-                android:layout_weight="1" />
+                android:layout_weight="1"
+                android:layout_marginBottom="40dp" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1" >
+
+            <Button
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:text="Account Information"
+                android:id="@+id/button"
+                android:width="200dp"
+                android:layout_below="@+id/home_check_button"
+                android:layout_alignLeft="@+id/home_check_button"
+                android:layout_alignStart="@+id/home_check_button"
+                android:height="40dp"
+                android:layout_weight="1"
+                android:onClick="onHomeClick"
+                android:layout_marginBottom="40dp" />
         </TableRow>
 
         <TableRow
@@ -63,7 +84,6 @@
                 android:text="Log Out"
                 android:id="@+id/home_logout_button"
                 android:width="200dp"
-                android:layout_marginTop="72dp"
                 android:layout_below="@+id/home_check_button"
                 android:layout_alignLeft="@+id/home_check_button"
                 android:layout_alignStart="@+id/home_check_button"
@@ -72,10 +92,6 @@
                 android:onClick="onHomeClick" />
         </TableRow>
 
-        <TableRow
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_weight="1" />
     </TableLayout>
 
 </FrameLayout>
