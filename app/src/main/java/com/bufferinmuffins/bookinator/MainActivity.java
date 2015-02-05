@@ -167,7 +167,6 @@ public class MainActivity extends ActionBarActivity
             View rootView;
             if (getArguments().getInt(ARG_SECTION_NUMBER) == 2) {
                 rootView = inflater.inflate(R.layout.fragment_book, container, false);
-
             } else {
                 rootView = inflater.inflate(R.layout.fragment_home, container, false);
             }
