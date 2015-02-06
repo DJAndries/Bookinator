@@ -14,11 +14,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.support.v4.widget.DrawerLayout;
+import android.widget.TextView;
 
 
 public class MainActivity extends ActionBarActivity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks, HomeFragment.OnFragmentInteractionListener,
-                    BookFragment.OnFragmentInteractionListener {
+                    BookFragment.OnFragmentInteractionListener, AccountFragment.OnFragmentInteractionListener {
 
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
@@ -57,7 +58,11 @@ public class MainActivity extends ActionBarActivity
             fragmentManager.beginTransaction()
                     .replace(R.id.container, BookFragment.newInstance())
                     .commit();
-        } else if (position == 4) {
+        } else if (position == 2) {
+            fragmentManager.beginTransaction()
+                    .replace(R.id.container, AccountFragment.newInstance())
+                    .commit();
+        }else if (position == 4) {
             Intent i = new Intent(this, LoginActivity.class);
 
             startActivity(i);
@@ -133,6 +138,8 @@ public class MainActivity extends ActionBarActivity
             mNavigationDrawerFragment.selectItem(1);
         } else if (view == findViewById(R.id.home_logout_button)) {
             mNavigationDrawerFragment.selectItem(4);
+        } else if (view == findViewById(R.id.home_account_button)) {
+            mNavigationDrawerFragment.selectItem(2);
         }
     }
 
@@ -167,8 +174,11 @@ public class MainActivity extends ActionBarActivity
             View rootView;
             if (getArguments().getInt(ARG_SECTION_NUMBER) == 2) {
                 rootView = inflater.inflate(R.layout.fragment_book, container, false);
+            } else if (getArguments().getInt(ARG_SECTION_NUMBER) == 3) {
+                rootView = inflater.inflate(R.layout.fragment_account, container, false);
             } else {
                 rootView = inflater.inflate(R.layout.fragment_home, container, false);
+
             }
             return rootView;
         }

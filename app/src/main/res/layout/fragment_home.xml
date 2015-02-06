@@ -62,7 +62,7 @@
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
                 android:text="Account Information"
-                android:id="@+id/button"
+                android:id="@+id/home_account_button"
                 android:width="200dp"
                 android:layout_below="@+id/home_check_button"
                 android:layout_alignLeft="@+id/home_check_button"

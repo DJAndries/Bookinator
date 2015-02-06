@@ -1,6 +1,8 @@
 package com.bufferinmuffins.bookinator;
 
 import android.os.AsyncTask;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Log;
 
 import org.apache.http.HttpResponse;
@@ -11,6 +13,7 @@ import org.apache.http.client.ResponseHandler;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 
+import java.io.Serializable;
 import java.net.URI;
 import java.net.URLEncoder;
 import java.security.MessageDigest;
@@ -18,11 +21,14 @@ import java.security.MessageDigest;
 /**
  * Created by proctor on 1/28/2015.
  */
-public class BookinatorSession {
+public class BookinatorSession implements Serializable {
+
+
     private String email;
     private String sessid;
     private String apiKey;
     private String errMsg = "";
+
 
     public LoginActivity getLoginActivity() {
         return loginActivity;
@@ -50,6 +56,10 @@ public class BookinatorSession {
 
     public void login(String email, String pwd) {
         new LoginTask().execute(email, pwd);
+    }
+
+    public String getEmail() {
+        return email;
     }
 
     private String getSHA256(String pwd) {
