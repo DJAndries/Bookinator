@@ -12,6 +12,8 @@ import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.io.Serializable;
 import java.net.URI;
@@ -25,6 +27,7 @@ public class BookinatorSession implements Serializable {
 
 
     private String email;
+    private String name;
     private String sessid;
     private String apiKey;
     private String errMsg = "";
@@ -52,6 +55,10 @@ public class BookinatorSession implements Serializable {
         this.loginActivity = act;
     }
 
+
+    public String getName() {
+        return name;
+    }
     public String getErrMsg() { return errMsg; }
 
     public void login(String email, String pwd) {
@@ -97,7 +104,7 @@ public class BookinatorSession implements Serializable {
                 /*getReq = new HttpGet(new URI("https://api.mongolab.com/api/1/databases/bookinatordb/collections/accounts?apiKey="
                         + apiKey + "&q={'email':'" + params[0] + "','pwd':'" + getSHA256(params[1]) + "'}"));*/
                 getReq = new HttpGet(new URI("https://api.mongolab.com/api/1/databases/bookinatordb/collections/accounts?apiKey="
-                        + apiKey + "&q=" + URLEncoder.encode("{\"email\":\"" + params[0] + "\",\"pwd\":\"" + getSHA256(params[1]) + "\"}", "UTF-8")));
+                        + apiKey + "&q=" + URLEncoder.encode("{\"email\":\"" + params[0] + "\",\"pwd\":\"" + getSHA256(params[1]) + "\"}&fields={\"name\": 1, \"email\": 1, \"pwd\": 1}", "UTF-8")));
             } catch (Exception e) {
                 errMsg = "Unexpected error occurred. Please try again.";
                 e.printStackTrace();
@@ -121,6 +128,17 @@ public class BookinatorSession implements Serializable {
                 errMsg = "Incorrect email/password.";
                 return false;
             }
+            try {
+                Log.d("yo", result);
+                JSONArray jsarr = new JSONArray(result);
+                name = jsarr.getJSONObject(0).getString("name");
+                email = jsarr.getJSONObject(0).getString("email");
+            } catch(Exception e) {
+                errMsg = "Unexpected error occurred. Please try again.";
+                e.printStackTrace();
+                return false;
+            }
+
             return true;
         }
 

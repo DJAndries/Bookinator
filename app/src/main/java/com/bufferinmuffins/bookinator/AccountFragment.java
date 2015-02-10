@@ -8,6 +8,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.support.v4.app.Fragment;
+import android.widget.EditText;
+import android.widget.TextView;
 
 
 /**
@@ -48,13 +50,18 @@ public class AccountFragment extends Fragment {
         if (getArguments() != null) {
 
         }
+
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_account, container, false);
+        View out = inflater.inflate(R.layout.fragment_account, container, false);
+        ((TextView)out.findViewById(R.id.account_user_field)).setText(LoginActivity.bsession.getName());
+        ((TextView)out.findViewById(R.id.account_user_email)).setText(LoginActivity.bsession.getEmail());
+        return out;
     }
 
     // TODO: Rename method, update argument and hook method into UI event

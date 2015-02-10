@@ -13,7 +13,9 @@ import android.widget.TextView;
 
 public class LoginActivity extends ActionBarActivity {
 
-    private BookinatorSession bsession;
+
+
+    public static BookinatorSession bsession;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,7 +60,7 @@ public class LoginActivity extends ActionBarActivity {
 
     public void onLoginResponse(boolean pass) {
         if (!pass) {
-            ((TextView) findViewById(R.id.login_errtext)).setText(bsession.getErrMsg());
+            ((TextView)findViewById(R.id.login_errtext)).setText(bsession.getErrMsg());
             return;
         }
         Intent i = new Intent(getApplicationContext(), MainActivity.class);
