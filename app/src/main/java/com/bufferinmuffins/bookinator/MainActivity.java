@@ -2,6 +2,7 @@ package com.bufferinmuffins.bookinator;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
@@ -63,9 +64,15 @@ public class MainActivity extends ActionBarActivity
                     .commit();
 
         }else if (position == 4) {
+            SharedPreferences settings = getSharedPreferences("session", 0);
+            SharedPreferences.Editor editor = settings.edit();
+            editor.remove("sessid");
+            editor.commit();
+            LoginActivity.bsession.closeSession();
             Intent i = new Intent(this, LoginActivity.class);
 
             startActivity(i);
+            finish();
         } else {
             fragmentManager.beginTransaction()
                     .replace(R.id.container, HomeFragment.newInstance())

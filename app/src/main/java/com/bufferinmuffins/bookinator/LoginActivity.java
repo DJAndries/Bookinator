@@ -1,6 +1,7 @@
 package com.bufferinmuffins.bookinator;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -20,9 +21,11 @@ public class LoginActivity extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
-        this.getSupportActionBar().hide();
+
         bsession = new BookinatorSession(getString(R.string.mongolab_apikey), this);
+        SharedPreferences settings = getSharedPreferences("session", 0);
+        bsession.checkSession(settings.getString("sessid", "notagoodsession"));
+
     }
 
 
@@ -61,6 +64,22 @@ public class LoginActivity extends ActionBarActivity {
     public void onLoginResponse(boolean pass) {
         if (!pass) {
             ((TextView)findViewById(R.id.login_errtext)).setText(bsession.getErrMsg());
+            return;
+        }
+        SharedPreferences settings = getSharedPreferences("session", 0);
+        SharedPreferences.Editor editor = settings.edit();
+        editor.putString("sessid", bsession.getSessID());
+        editor.commit();
+        Intent i = new Intent(getApplicationContext(), MainActivity.class);
+        startActivity(i);
+        finish();
+    }
+
+
+    public void onSessionResponse(boolean pass) {
+        if (!pass) {
+            setContentView(R.layout.activity_login);
+            this.getSupportActionBar().hide();
             return;
         }
         Intent i = new Intent(getApplicationContext(), MainActivity.class);
