@@ -64,11 +64,12 @@ public class MainActivity extends ActionBarActivity
                     .commit();
 
         }else if (position == 4) {
+            LoginActivity.bsession.closeSession();
             SharedPreferences settings = getSharedPreferences("session", 0);
             SharedPreferences.Editor editor = settings.edit();
             editor.remove("sessid");
             editor.commit();
-            LoginActivity.bsession.closeSession();
+
             Intent i = new Intent(this, LoginActivity.class);
 
             startActivity(i);

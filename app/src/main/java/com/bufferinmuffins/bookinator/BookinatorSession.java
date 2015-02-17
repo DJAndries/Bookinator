@@ -7,6 +7,7 @@ import android.util.Log;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.StringEntity;
@@ -110,12 +111,13 @@ public class BookinatorSession implements Serializable {
                 return false;
             }
             HttpClient cli = new DefaultHttpClient();
-            HttpPut putReq;
+            HttpDelete putReq;
 
             JSONObject jop = new JSONObject();
             JSONObject jop2 = new JSONObject();
+            
             try {
-                putReq = new HttpPut(new URI("https://api.mongolab.com/api/1/databases/bookinatordb/collections/sessions?apiKey="
+                putReq = new HttpDelete(new URI("https://api.mongolab.com/api/1/databases/bookinatordb/collections/sessions/" + sessid  + "?apiKey="
                         + apiKey));
             } catch (Exception e) {
 
@@ -129,9 +131,7 @@ public class BookinatorSession implements Serializable {
 
             putReq.addHeader("Content-Type", "application/json");
             try {
-                jop2.put("$oid", sessid);
-                jop.put("_id", jop2);
-                putReq.setEntity(new StringEntity(jop.toString(), "UTF8"));
+
                 putResp = cli.execute(putReq);
 
 
