@@ -48,6 +48,7 @@ public class MainActivity extends ActionBarActivity
 
     @Override
     public void onBackPressed() {
+
     }
 
     @Override
@@ -80,6 +81,14 @@ public class MainActivity extends ActionBarActivity
                     .commit();
         }
 
+    }
+
+    public void onAccountClick(final View view) {
+        if (view.getId() == R.id.account_changepwd) {
+            Intent i = new Intent(getApplicationContext(), ChangePwdActivity.class);
+            startActivity(i);
+
+        }
     }
 
     public void onSectionAttached(int number) {
@@ -151,11 +160,7 @@ public class MainActivity extends ActionBarActivity
         }
     }
 
-    public void onAccountClick(final View view) {
-        if (view == findViewById(R.id.account_changepwd)) {
 
-        }
-    }
 
 
 

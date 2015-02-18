@@ -89,7 +89,8 @@
                 android:text="Change Password"
                 android:id="@+id/account_changepwd"
                 android:layout_weight="1"
-                android:layout_marginTop="40dp" />
+                android:layout_marginTop="40dp"
+                android:onClick="onAccountClick" />
         </TableRow>
 
         <TableRow

@@ -26,6 +26,10 @@
             android:name=".RegisterActivity"
             android:label="@string/title_activity_register" >
         </activity>
+        <activity
+            android:name=".ChangePwdActivity"
+            android:label="@string/title_activity_change_pwd" >
+        </activity>
     </application>
 
 </manifest>

@@ -80,7 +80,7 @@ public class BookinatorSession implements Serializable {
         return email;
     }
 
-    private String getSHA256(String pwd) {
+    public static String getSHA256(String pwd) {
         byte[] out;
         String out2 = "";
         try {
@@ -115,7 +115,7 @@ public class BookinatorSession implements Serializable {
 
             JSONObject jop = new JSONObject();
             JSONObject jop2 = new JSONObject();
-            
+
             try {
                 putReq = new HttpDelete(new URI("https://api.mongolab.com/api/1/databases/bookinatordb/collections/sessions/" + sessid  + "?apiKey="
                         + apiKey));
@@ -215,6 +215,8 @@ public class BookinatorSession implements Serializable {
             loginActivity.onSessionResponse(aBoolean);
         }
     }
+
+
 
     private class LoginTask extends AsyncTask<String, Void, Boolean> {
 

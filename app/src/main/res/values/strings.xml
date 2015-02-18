@@ -16,5 +16,6 @@
     <string name="hello_world">Hello world!</string>
     <string name="mongolab_apikey">C8yKJC_8IL7OPjhHzB95n5eYk7_c3yVW</string>
     <string name="title_activity_register">Bookinator Registration</string>
+    <string name="title_activity_change_pwd">ChangePwdActivity</string>
 
 </resources>
