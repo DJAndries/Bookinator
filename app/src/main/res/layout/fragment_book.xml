@@ -29,7 +29,8 @@
 
                 android:inputType="date"
                 android:ems="10"
-                android:id="@+id/book_date_edit" />
+                android:id="@+id/book_date_edit"
+                android:onClick="onBookClick" />
 
         </TableRow>
 
@@ -50,7 +51,8 @@
                 android:layout_height="wrap_content"
                 android:inputType="time"
                 android:ems="10"
-                android:id="@+id/book_time_edit" />
+                android:id="@+id/book_time_edit"
+                android:onClick="onBookClick" />
 
         </TableRow>
 
@@ -74,11 +76,6 @@
                 android:spinnerMode="dialog" />
 
         </TableRow>
-
-        <CalendarView
-            android:layout_width="wrap_content"
-            android:layout_height="195dp"
-            android:id="@+id/calendarView" />
 
         <TableRow
             android:layout_width="fill_parent"

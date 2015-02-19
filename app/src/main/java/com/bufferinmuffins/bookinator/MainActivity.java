@@ -1,6 +1,8 @@
 package com.bufferinmuffins.bookinator;
 
 import android.app.Activity;
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -15,8 +17,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.support.v4.widget.DrawerLayout;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.TimePicker;
+
+import java.util.Calendar;
 
 
 public class MainActivity extends ActionBarActivity
@@ -91,6 +97,31 @@ public class MainActivity extends ActionBarActivity
         }
     }
 
+    public void onBookClick(final View view) {
+        if (view.getId() == R.id.book_date_edit) {
+            Calendar c = Calendar.getInstance();
+            new DatePickerDialog(MainActivity.this, new BookDateSetListener((EditText)view), c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH)).show();
+        }
+        if (view.getId() == R.id.book_time_edit) {
+            Calendar c = Calendar.getInstance();
+            new TimePickerDialog(MainActivity.this, new BookDateSetListener((EditText)view), c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE), false).show();
+        }
+    }
+
+    private class BookDateSetListener implements DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener {
+        private EditText field;
+        public BookDateSetListener(EditText field) {
+            this.field = field;
+        }
+        public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+            field.setText((monthOfYear+1)+"-"+dayOfMonth+"-"+year);
+        }
+
+        @Override
+        public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+            field.setText((hourOfDay%13)+":"+minute+" "+(Math.floor((double)hourOfDay / 12) >= 1 ? "PM" : "AM"));
+        }
+    }
     public void onSectionAttached(int number) {
         switch (number) {
             case 1:
