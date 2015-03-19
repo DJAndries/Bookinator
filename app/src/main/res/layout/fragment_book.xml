@@ -26,11 +26,11 @@
             <EditText
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-
-                android:inputType="date"
                 android:ems="10"
                 android:id="@+id/book_date_edit"
-                android:onClick="onBookClick" />
+                android:focusable="false"
+                android:onClick="onBookClick"
+                android:editable="false"/>
 
         </TableRow>
 
@@ -49,10 +49,10 @@
             <EditText
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:inputType="time"
                 android:ems="10"
                 android:id="@+id/book_time_edit"
-                android:onClick="onBookClick" />
+                android:onClick="onBookClick"
+                android:editable="false"/>
 
         </TableRow>
 
