@@ -86,7 +86,8 @@
                 android:layout_height="wrap_content"
                 android:text="Book"
                 android:id="@+id/book_button_submit"
-                android:layout_weight="1" />
+                android:layout_weight="1"
+                android:onClick="onBookClick" />
         </TableRow>
 
     </TableLayout>

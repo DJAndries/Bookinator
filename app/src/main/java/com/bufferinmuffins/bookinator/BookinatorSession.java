@@ -1,21 +1,16 @@
 package com.bufferinmuffins.bookinator;
 
 import android.os.AsyncTask;
-import android.os.Parcel;
-import android.os.Parcelable;
 import android.util.Log;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpDelete;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpPut;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.impl.client.BasicResponseHandler;
-import org.apache.http.client.ResponseHandler;
-import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.BasicResponseHandler;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -64,6 +59,8 @@ public class BookinatorSession implements Serializable {
         return name;
     }
     public String getErrMsg() { return errMsg; }
+
+    public String getUserid() {return userid;}
 
     public void login(String email, String pwd) {
         new LoginTask().execute(email, pwd);

@@ -1,7 +1,9 @@
 package com.bufferinmuffins.bookinator;
 
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -17,14 +19,19 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -33,7 +40,7 @@ import java.util.Calendar;
 
 public class MainActivity extends ActionBarActivity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks, HomeFragment.OnFragmentInteractionListener,
-                    BookFragment.OnFragmentInteractionListener, AccountFragment.OnFragmentInteractionListener {
+                    BookFragment.OnFragmentInteractionListener, AccountFragment.OnFragmentInteractionListener, BookingsFragment.OnFragmentInteractionListener {
 
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
@@ -44,6 +51,8 @@ public class MainActivity extends ActionBarActivity
      */
     private CharSequence mTitle;
     public static ArrayAdapter<String> currentInstructorList;
+    public static ArrayAdapter<String> currentBookingsList;
+    public static ArrayList<String> instructorListIds;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,13 +77,14 @@ public class MainActivity extends ActionBarActivity
     public void onNavigationDrawerItemSelected(int position) {
         // update the main content by replacing fragments
         FragmentManager fragmentManager = getSupportFragmentManager();
-        if (position == 1) {
+        if (position == 0) {
+            new CheckBookingsTask().execute();
+        } else if (position == 1) {
             new InstructorSpinnerTask().execute();
         } else if (position == 2) {
             fragmentManager.beginTransaction()
                     .replace(R.id.container, AccountFragment.newInstance())
                     .commit();
-
         }else if (position == 4) {
             LoginActivity.bsession.closeSession();
             SharedPreferences settings = getSharedPreferences("session", 0);
@@ -110,6 +120,13 @@ public class MainActivity extends ActionBarActivity
         if (view.getId() == R.id.book_time_edit) {
             Calendar c = Calendar.getInstance();
             new TimePickerDialog(MainActivity.this, new BookDateSetListener((EditText)view), c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE), false).show();
+        }
+        if (view.getId() == R.id.book_button_submit) {
+            if (((EditText)findViewById(R.id.book_date_edit)).getText().toString().length() < 2 || ((EditText)findViewById(R.id.book_time_edit)).getText().toString().length() < 2) {
+                Toast.makeText(getApplication(), "Please select a date and time", Toast.LENGTH_LONG);
+                return;
+            }
+            new BookingTask().execute(((Spinner)findViewById(R.id.book_instructor_spinner)).getSelectedItemPosition() + "", ((EditText)findViewById(R.id.book_date_edit)).getText().toString(), ((EditText)findViewById(R.id.book_time_edit)).getText().toString());
         }
     }
 
@@ -193,6 +210,8 @@ public class MainActivity extends ActionBarActivity
             mNavigationDrawerFragment.selectItem(4);
         } else if (view == findViewById(R.id.home_account_button)) {
             mNavigationDrawerFragment.selectItem(2);
+        } else if (view == findViewById(R.id.home_check_button)) {
+            mNavigationDrawerFragment.selectItem(0);
         }
     }
 
@@ -232,9 +251,11 @@ public class MainActivity extends ActionBarActivity
             }
             try {
                 JSONArray jsarr = new JSONArray(result);
+                instructorListIds = new ArrayList<String>();
                 ArrayList<String> instrArr = new ArrayList<String>();
                 for (int i = 0; i < jsarr.length(); i++) {
                     instrArr.add(jsarr.getJSONObject(i).getString("name"));
+                    instructorListIds.add(jsarr.getJSONObject(i).getJSONObject("_id").getString("$oid"));
                 }
                 currentInstructorList = new ArrayAdapter<String>(getApplicationContext(),
                         android.R.layout.simple_spinner_dropdown_item, instrArr);
@@ -253,7 +274,7 @@ public class MainActivity extends ActionBarActivity
         }
 
     }
-    public class BookingTask extends AsyncTask<String, Void, Boolean> {
+    public class CheckBookingsTask extends AsyncTask<String, Void, Boolean> {
         @Override
         protected Boolean doInBackground(String... params) {
             if (LoginActivity.bsession.getSessID() == "notagoodsession") {
@@ -264,7 +285,7 @@ public class MainActivity extends ActionBarActivity
 
             //login query
             try {
-                getReq = new HttpGet(new URI("https://api.mongolab.com/api/1/databases/bookinatordb/collections/instructors?apiKey="
+                getReq = new HttpGet(new URI("https://api.mongolab.com/api/1/databases/bookinatordb/collections/bookings?apiKey="
                         + getString(R.string.mongolab_apikey)));
             } catch (Exception e) {
                 e.printStackTrace();
@@ -291,9 +312,9 @@ public class MainActivity extends ActionBarActivity
                 JSONArray jsarr = new JSONArray(result);
                 ArrayList<String> instrArr = new ArrayList<String>();
                 for (int i = 0; i < jsarr.length(); i++) {
-                    instrArr.add(jsarr.getJSONObject(i).getString("name"));
+                    instrArr.add(jsarr.getJSONObject(i).getString("instructorname"));
                 }
-                currentInstructorList = new ArrayAdapter<String>(getApplicationContext(),
+                currentBookingsList = new ArrayAdapter<String>(getApplicationContext(),
                         android.R.layout.simple_spinner_dropdown_item, instrArr);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -302,11 +323,76 @@ public class MainActivity extends ActionBarActivity
             return true;
         }
         public void onPostExecute(Boolean pass) {
-
             if (pass)
                 getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.container, BookFragment.newInstance())
+                        .replace(R.id.container, BookingsFragment.newInstance())
                         .commit();
+        }
+
+    }
+    public void postBookingTask() {
+        AlertDialog alertDialog = new AlertDialog.Builder(this).create();
+        alertDialog.setTitle("Congratulations!");
+        alertDialog.setMessage("You have successfully booked an appointment. Please see the current appointments to check the status.");
+        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        mNavigationDrawerFragment.selectItem(0);
+                    }
+                });
+        alertDialog.show();
+
+    }
+
+    public class BookingTask extends AsyncTask<String, Void, Boolean> {
+        @Override
+        protected Boolean doInBackground(String... params) {
+            //session store
+            HttpClient cli = new DefaultHttpClient();
+            HttpPost postReq;
+
+            try {
+
+                postReq = new HttpPost(new URI("https://api.mongolab.com/api/1/databases/bookinatordb/collections/bookings?apiKey=" + getString(R.string.mongolab_apikey)));
+            } catch (Exception e) {
+                Toast.makeText(getApplication(), "Unexpected error occurred. Please try again.", Toast.LENGTH_LONG).show();
+                e.printStackTrace();
+                return false;
+            }
+            HttpResponse postResp;
+            String result;
+
+            JSONObject jop = new JSONObject();
+            postReq.addHeader("Content-Type", "application/json");
+
+            try {
+                jop.put("userid", LoginActivity.bsession.getUserid());
+                jop.put("instructorid", instructorListIds.get(Integer.parseInt(params[0])));
+                jop.put("instructorname", currentInstructorList.getItem((Integer.parseInt(params[0]))));
+                jop.put("datetime", params[1] + " " + params[2]);
+                postReq.setEntity(new StringEntity(jop.toString(), "UTF8"));
+                postResp = cli.execute(postReq);
+                result = new BasicResponseHandler().handleResponse(postResp);
+                jop = new JSONObject(result);
+            } catch (Exception e) {
+                Toast.makeText(getApplication(), "Unexpected error occurred. Please try again.", Toast.LENGTH_LONG).show();
+                e.printStackTrace();
+                return false;
+            }
+            cli.getConnectionManager().shutdown();
+            if (result.length() < 10) {
+                Toast.makeText(getApplication(), "Unexpected error occurred. Please try again.", Toast.LENGTH_LONG).show();
+                return false;
+            }
+
+
+            return true;
+        }
+        public void onPostExecute(Boolean pass) {
+
+            if (pass) {
+                postBookingTask();
+            }
         }
 
     }
