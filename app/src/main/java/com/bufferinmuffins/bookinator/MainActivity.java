@@ -40,7 +40,7 @@ import java.util.Calendar;
 
 public class MainActivity extends ActionBarActivity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks, HomeFragment.OnFragmentInteractionListener,
-                    BookFragment.OnFragmentInteractionListener, AccountFragment.OnFragmentInteractionListener, BookingsFragment.OnFragmentInteractionListener {
+                    BookFragment.OnFragmentInteractionListener, AccountFragment.OnFragmentInteractionListener, BookingsFragment.OnFragmentInteractionListener, SettingsFragment.OnFragmentInteractionListener {
 
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
@@ -85,7 +85,11 @@ public class MainActivity extends ActionBarActivity
             fragmentManager.beginTransaction()
                     .replace(R.id.container, AccountFragment.newInstance())
                     .commit();
-        }else if (position == 4) {
+        } else if (position == 3) {
+            fragmentManager.beginTransaction()
+                    .replace(R.id.container, SettingsFragment.newInstance())
+                    .commit();
+        } else if (position == 4) {
             LoginActivity.bsession.closeSession();
             SharedPreferences settings = getSharedPreferences("session", 0);
             SharedPreferences.Editor editor = settings.edit();
@@ -126,7 +130,7 @@ public class MainActivity extends ActionBarActivity
                 Toast.makeText(getApplication(), "Please select a date and time", Toast.LENGTH_LONG);
                 return;
             }
-            new BookingTask().execute(((Spinner)findViewById(R.id.book_instructor_spinner)).getSelectedItemPosition() + "", ((EditText)findViewById(R.id.book_date_edit)).getText().toString(), ((EditText)findViewById(R.id.book_time_edit)).getText().toString());
+            new BookingTask().execute(((Spinner) findViewById(R.id.book_instructor_spinner)).getSelectedItemPosition() + "", ((EditText) findViewById(R.id.book_date_edit)).getText().toString(), ((EditText) findViewById(R.id.book_time_edit)).getText().toString());
         }
     }
 
