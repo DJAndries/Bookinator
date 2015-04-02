@@ -2,7 +2,9 @@ package com.bufferinmuffins.bookinator;
 
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
+import android.app.PendingIntent;
 import android.app.TimePickerDialog;
+import android.app.AlarmManager;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -36,6 +38,7 @@ import org.json.JSONObject;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 
 
 public class MainActivity extends ActionBarActivity
@@ -66,6 +69,7 @@ public class MainActivity extends ActionBarActivity
         mNavigationDrawerFragment.setUp(
                 R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));
+        as = new AlarmService(getApplicationContext());
     }
 
     @Override
@@ -278,12 +282,15 @@ public class MainActivity extends ActionBarActivity
         }
 
     }
+    private AlarmService as;
     public class CheckBookingsTask extends AsyncTask<String, Void, Boolean> {
         @Override
         protected Boolean doInBackground(String... params) {
             if (LoginActivity.bsession.getSessID() == "notagoodsession") {
                 return false;
             }
+            ArrayList<Date> ardate = new ArrayList<Date>();
+            as.cancelAlarms();
             HttpClient cli = new DefaultHttpClient();
             HttpGet getReq;
 
@@ -316,7 +323,8 @@ public class MainActivity extends ActionBarActivity
                 JSONArray jsarr = new JSONArray(result);
                 ArrayList<String> instrArr = new ArrayList<String>();
                 for (int i = 0; i < jsarr.length(); i++) {
-                    instrArr.add(jsarr.getJSONObject(i).getString("instructorname"));
+                    instrArr.add(jsarr.getJSONObject(i).getString(LoginActivity.bsession.getIsInstructor() ? "studentname" : "instructorname"));
+                    //ardate.add(new Date(jsarr.getJSONObject(i).getString("datetime")));
                 }
                 currentBookingsList = new ArrayAdapter<String>(getApplicationContext(),
                         android.R.layout.simple_spinner_dropdown_item, instrArr);
@@ -324,6 +332,8 @@ public class MainActivity extends ActionBarActivity
                 e.printStackTrace();
                 return false;
             }
+
+            as.startAlarm(ardate);
             return true;
         }
         public void onPostExecute(Boolean pass) {
@@ -334,6 +344,7 @@ public class MainActivity extends ActionBarActivity
         }
 
     }
+
     public void postBookingTask() {
         AlertDialog alertDialog = new AlertDialog.Builder(this).create();
         alertDialog.setTitle("Congratulations!");
@@ -373,6 +384,7 @@ public class MainActivity extends ActionBarActivity
                 jop.put("userid", LoginActivity.bsession.getUserid());
                 jop.put("instructorid", instructorListIds.get(Integer.parseInt(params[0])));
                 jop.put("instructorname", currentInstructorList.getItem((Integer.parseInt(params[0]))));
+                jop.put("studentname", LoginActivity.bsession.getName());
                 jop.put("datetime", params[1] + " " + params[2]);
                 postReq.setEntity(new StringEntity(jop.toString(), "UTF8"));
                 postResp = cli.execute(postReq);

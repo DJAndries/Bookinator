@@ -166,9 +166,26 @@ public class Registration {
                 jop.put("email", params[0]);
                 jop.put("pwd", getSHA256(params[1]));
                 jop.put("name", params[2]);
+                int atIndex = params[0].indexOf("@");
+                if (params[0].substring(atIndex).equalsIgnoreCase("@bcit.ca")) {
+                    jop.put("instructor", 1);
+                }
+
                 postReq.setEntity(new StringEntity(jop.toString(), "UTF8"));
                 postResp = cli.execute(postReq);
                 result = new BasicResponseHandler().handleResponse(postResp);
+
+                JSONObject jop2 = new JSONObject(result);
+
+                if (params[0].substring(atIndex).equalsIgnoreCase("@bcit.ca")) {
+                    jop = new JSONObject();
+                    postReq = new HttpPost(new URI("https://api.mongolab.com/api/1/databases/bookinatordb/collections/instructors?apiKey=" + apiKey));
+                    postReq.addHeader("Content-Type", "application/json");
+                    jop.put("uid", jop2.getJSONObject("_id").getString("$oid"));
+                    jop.put("name", params[2]);
+                    postReq.setEntity(new StringEntity(jop.toString()));
+                    cli.execute(postReq);
+                }
             } catch (Exception e) {
                 errMsg = "Unexpected error occurred. Please try again.";
                 e.printStackTrace();

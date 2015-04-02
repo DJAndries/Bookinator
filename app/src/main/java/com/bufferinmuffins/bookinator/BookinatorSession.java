@@ -27,6 +27,11 @@ public class BookinatorSession implements Serializable {
     private String sessid;
     private String apiKey;
     private String errMsg = "";
+    private boolean isInstructor = false;
+
+    public boolean getIsInstructor() {
+        return isInstructor;
+    }
 
     public String getSessID() {
         return sessid;
@@ -198,6 +203,7 @@ public class BookinatorSession implements Serializable {
                 name = jsarr.getJSONObject(0).getString("name");
                 email = jsarr.getJSONObject(0).getString("email");
                 userid = jsarr.getJSONObject(0).getJSONObject("_id").getString("$oid");
+                isInstructor = (jsarr.getJSONObject(0).has("instructor") && jsarr.getJSONObject(0).getInt("instructor") == 1);
             } catch(Exception e) {
 
                 errMsg = "Unexpected error occurred. Please try again.";
@@ -257,6 +263,7 @@ public class BookinatorSession implements Serializable {
                 name = jsarr.getJSONObject(0).getString("name");
                 email = jsarr.getJSONObject(0).getString("email");
                 userid = jsarr.getJSONObject(0).getJSONObject("_id").getString("$oid");
+                isInstructor = (jsarr.getJSONObject(0).has("instructor") && jsarr.getJSONObject(0).getInt("instructor") == 1);
             } catch(Exception e) {
                 errMsg = "Unexpected error occurred. Please try again.";
                 e.printStackTrace();

@@ -30,6 +30,7 @@
             android:name=".ChangePwdActivity"
             android:label="@string/title_activity_change_pwd" >
         </activity>
+        <receiver android:process=":remote" android:name="AlarmReceiver"></receiver>
     </application>
 
 </manifest>
