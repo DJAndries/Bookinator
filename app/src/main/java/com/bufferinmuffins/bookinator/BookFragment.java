@@ -5,9 +5,12 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ListView;
 import android.widget.Spinner;
 
 
@@ -23,7 +26,6 @@ public class BookFragment extends Fragment {
 
 //test
     private OnFragmentInteractionListener mListener;
-
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
@@ -37,9 +39,7 @@ public class BookFragment extends Fragment {
         return fragment;
     }
 
-    public BookFragment() {
-        // Required empty public constructor
-    }
+    public BookFragment() {}
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -60,6 +60,7 @@ public class BookFragment extends Fragment {
         MainActivity.currentInstructorList.setDropDownViewResource(android.R.layout.simple_list_item_1);
         ((Spinner)out.findViewById(R.id.book_instructor_spinner)).setAdapter(MainActivity.currentInstructorList);
         ((Spinner)out.findViewById(R.id.book_instructor_spinner)).setBackgroundColor(Color.BLACK);
+
         return out;
 
     }

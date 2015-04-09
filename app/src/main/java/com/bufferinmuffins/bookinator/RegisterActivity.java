@@ -34,13 +34,14 @@ public class RegisterActivity extends ActionBarActivity {
             AlertDialog alertDialog = new AlertDialog.Builder(this).create();
             alertDialog.setTitle("Congratulations!");
             alertDialog.setMessage("You have been successfully registered! You may now log in.");
-            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
-                    new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-                            finish();
-                        }
-                    });
+            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                    finish();
+                }
+            });
+
             alertDialog.show();
         } else {
             ((TextView)findViewById(R.id.register_errmsgview)).setText(reg.getErrMsg());

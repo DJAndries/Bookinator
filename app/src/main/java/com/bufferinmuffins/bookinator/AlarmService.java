@@ -25,18 +25,18 @@ public class AlarmService {
         //Set the alarm to 10 seconds from now
 
         for (int i = 0; i < al.size(); i++) {
-            Calendar c = Calendar.getInstance();
+            /*Calendar c = Calendar.getInstance();
             c.set(Calendar.MONTH, al.get(i).getMonth());
             c.set(Calendar.DAY_OF_MONTH, al.get(i).getDate());
             c.set(Calendar.YEAR, al.get(i).getYear());
             c.set(Calendar.HOUR_OF_DAY, al.get(i).getHours());
             c.set(Calendar.MINUTE, al.get(i).getMinutes());
             c.set(Calendar.SECOND, al.get(i).getSeconds());
-            long firstTime = c.getTimeInMillis();
+            long firstTime = c.getTimeInMillis();*/
             // Schedule the alarm!
             mAlarmSender = PendingIntent.getBroadcast(context, i, new Intent(context, AlarmReceiver.class), 0);
             AlarmManager am = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
-            am.set(AlarmManager.RTC_WAKEUP, firstTime, mAlarmSender);
+            am.set(AlarmManager.RTC_WAKEUP, al.get(i).getTime(), mAlarmSender);
             alarmCount++;
         }
 

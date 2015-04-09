@@ -15,18 +15,22 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
@@ -36,6 +40,8 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.net.URI;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -43,7 +49,7 @@ import java.util.Date;
 
 public class MainActivity extends ActionBarActivity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks, HomeFragment.OnFragmentInteractionListener,
-                    BookFragment.OnFragmentInteractionListener, AccountFragment.OnFragmentInteractionListener, BookingsFragment.OnFragmentInteractionListener, SettingsFragment.OnFragmentInteractionListener {
+                    BookFragment.OnFragmentInteractionListener, AccountFragment.OnFragmentInteractionListener, BookingsFragment.OnFragmentInteractionListener, SettingsFragment.OnFragmentInteractionListener, AdapterView.OnItemClickListener {
 
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
@@ -56,6 +62,7 @@ public class MainActivity extends ActionBarActivity
     public static ArrayAdapter<String> currentInstructorList;
     public static ArrayAdapter<String> currentBookingsList;
     public static ArrayList<String> instructorListIds;
+    public static MainActivity currentInstance;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,6 +77,7 @@ public class MainActivity extends ActionBarActivity
                 R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));
         as = new AlarmService(getApplicationContext());
+        currentInstance = this;
     }
 
     @Override
@@ -137,6 +145,31 @@ public class MainActivity extends ActionBarActivity
             new BookingTask().execute(((Spinner) findViewById(R.id.book_instructor_spinner)).getSelectedItemPosition() + "", ((EditText) findViewById(R.id.book_date_edit)).getText().toString(), ((EditText) findViewById(R.id.book_time_edit)).getText().toString());
         }
     }
+
+
+    private int selectedBookingPos = -1;
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        selectedBookingPos = position;
+        final AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this).create();
+        alertDialog.setTitle("Confirmation");
+        alertDialog.setMessage("Are you sure you wish to delete this appointment?");
+        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "NO",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "YES", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+
+                new DeleteBookingTask().execute(selectedBookingPos);
+            }
+        });
+        alertDialog.show();
+    }
+
 
     public class BookDateSetListener implements DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener {
         private EditText field;
@@ -319,12 +352,20 @@ public class MainActivity extends ActionBarActivity
             if (result.length() < 10) {
                 return false;
             }
+
+            SimpleDateFormat formatter = new SimpleDateFormat("MM-dd-yyyy hh:mm a");
             try {
                 JSONArray jsarr = new JSONArray(result);
                 ArrayList<String> instrArr = new ArrayList<String>();
+                instructorListIds = new ArrayList<String>();
+                SharedPreferences settings = MainActivity.currentInstance.getSharedPreferences("session", 0);
                 for (int i = 0; i < jsarr.length(); i++) {
-                    instrArr.add(jsarr.getJSONObject(i).getString(LoginActivity.bsession.getIsInstructor() ? "studentname" : "instructorname"));
-                    //ardate.add(new Date(jsarr.getJSONObject(i).getString("datetime")));
+                    instrArr.add(jsarr.getJSONObject(i).getString(LoginActivity.bsession.getIsInstructor() ? "studentname" : "instructorname") + " " + jsarr.getJSONObject(i).getString("datetime"));
+                    Date date1 = new Date();
+                    instructorListIds.add(jsarr.getJSONObject(i).getJSONObject("_id").getString("$oid"));
+                    if (formatter.parse(jsarr.getJSONObject(i).getString("datetime")).compareTo(date1) > 0 && settings.getBoolean("notifyEnable", true)) {
+                        ardate.add(formatter.parse(jsarr.getJSONObject(i).getString("datetime")));
+                    }
                 }
                 currentBookingsList = new ArrayAdapter<String>(getApplicationContext(),
                         android.R.layout.simple_spinner_dropdown_item, instrArr);
@@ -337,13 +378,58 @@ public class MainActivity extends ActionBarActivity
             return true;
         }
         public void onPostExecute(Boolean pass) {
-            if (pass)
+            if (pass) {
                 getSupportFragmentManager().beginTransaction()
                         .replace(R.id.container, BookingsFragment.newInstance())
                         .commit();
+
+            }
         }
 
     }
+
+    public class DeleteBookingTask extends AsyncTask<Integer, Void, Boolean> {
+        @Override
+        protected Boolean doInBackground(Integer... params) {
+            if (LoginActivity.bsession.getSessID() == "notagoodsession") {
+                return false;
+            }
+            ArrayList<Date> ardate = new ArrayList<Date>();
+            as.cancelAlarms();
+            HttpClient cli = new DefaultHttpClient();
+            HttpDelete getReq;
+
+            //login query
+            try {
+                getReq = new HttpDelete(new URI("https://api.mongolab.com/api/1/databases/bookinatordb/collections/bookings/" + instructorListIds.get(params[0]) + "?apiKey="
+                        + getString(R.string.mongolab_apikey)));
+            } catch (Exception e) {
+                e.printStackTrace();
+                return false;
+            }
+            HttpResponse getResp;
+            String result;
+            getReq.addHeader("Content-Type", "application/json");
+            try {
+
+                getResp = cli.execute(getReq);
+
+                result = new BasicResponseHandler().handleResponse(getResp);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                return false;
+            }
+            cli.getConnectionManager().shutdown();
+
+            return true;
+        }
+        public void onPostExecute(Boolean pass) {
+            mNavigationDrawerFragment.selectItem(0);
+        }
+
+    }
+
 
     public void postBookingTask() {
         AlertDialog alertDialog = new AlertDialog.Builder(this).create();

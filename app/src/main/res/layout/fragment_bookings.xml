@@ -10,17 +10,11 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent">
 
-        <ScrollView
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:id="@+id/scrollView3"
-            android:layout_margin="20px">
-
-            <ListView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/bookings_listView"
-                android:background="#ff717171" />
-        </ScrollView>
+        <ListView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/bookings_listView"
+            android:background="#ff717171"
+            android:focusable="true" />
     </LinearLayout>
 </FrameLayout>

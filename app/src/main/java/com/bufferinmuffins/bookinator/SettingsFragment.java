@@ -1,12 +1,15 @@
 package com.bufferinmuffins.bookinator;
 
 import android.app.Activity;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
+import android.widget.Switch;
 
 
 /**
@@ -50,7 +53,18 @@ public class SettingsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_settings, container, false);
+        View out = inflater.inflate(R.layout.fragment_settings, container, false);
+        SharedPreferences settings = MainActivity.currentInstance.getSharedPreferences("session", 0);
+        ((Switch)out.findViewById(R.id.switch1)).setChecked(settings.getBoolean("notifyEnable", true));
+        ((Switch)out.findViewById(R.id.switch1)).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                SharedPreferences settings = MainActivity.currentInstance.getSharedPreferences("session", 0);
+                SharedPreferences.Editor editor = settings.edit();
+                editor.putBoolean("notifyEnable", isChecked);
+                editor.commit();
+            }
+        });
+        return out;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
