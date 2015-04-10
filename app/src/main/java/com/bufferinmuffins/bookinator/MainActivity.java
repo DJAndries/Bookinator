@@ -40,6 +40,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.net.URI;
+import java.net.URLEncoder;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -296,7 +297,7 @@ public class MainActivity extends ActionBarActivity
                 ArrayList<String> instrArr = new ArrayList<String>();
                 for (int i = 0; i < jsarr.length(); i++) {
                     instrArr.add(jsarr.getJSONObject(i).getString("name"));
-                    instructorListIds.add(jsarr.getJSONObject(i).getJSONObject("_id").getString("$oid"));
+                    instructorListIds.add(jsarr.getJSONObject(i).getString("uid"));
                 }
                 currentInstructorList = new ArrayAdapter<String>(getApplicationContext(),
                         android.R.layout.simple_spinner_dropdown_item, instrArr);
@@ -330,7 +331,7 @@ public class MainActivity extends ActionBarActivity
             //login query
             try {
                 getReq = new HttpGet(new URI("https://api.mongolab.com/api/1/databases/bookinatordb/collections/bookings?apiKey="
-                        + getString(R.string.mongolab_apikey)));
+                        + getString(R.string.mongolab_apikey) + "&q=" + URLEncoder.encode("{\"" + (LoginActivity.bsession.getIsInstructor() ? "instructorid" : "userid") + "\":\"" + LoginActivity.bsession.getUserid() + "\"}", "UTF-8")));
             } catch (Exception e) {
                 e.printStackTrace();
                 return false;
@@ -350,7 +351,10 @@ public class MainActivity extends ActionBarActivity
             }
             cli.getConnectionManager().shutdown();
             if (result.length() < 10) {
-                return false;
+                ArrayList<String> instrArr = new ArrayList<String>();
+                currentBookingsList = new ArrayAdapter<String>(getApplicationContext(),
+                        android.R.layout.simple_spinner_dropdown_item, instrArr);
+                return true;
             }
 
             SimpleDateFormat formatter = new SimpleDateFormat("MM-dd-yyyy hh:mm a");
